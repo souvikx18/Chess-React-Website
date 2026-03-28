@@ -1,5 +1,5 @@
 // src/lenis.js
-import Lenis from '@studio-freight/lenis'
+import Lenis from 'lenis'
 
 export const initLenis = () => {
   const lenis = new Lenis({
