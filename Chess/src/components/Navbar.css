@@ -50,8 +50,10 @@
   padding: 0;
 }
 
-.navbar-links li a {
+.navbar-links li a, .navbar-links li button {
   position: relative;
+  background: none;
+  border: none;
   color: #eeeeee;
   text-decoration: none;
   font-size: 1.1rem;
@@ -60,9 +62,10 @@
   text-transform: uppercase;
   transition: all 0.3s ease;
   padding: 0.5rem 0;
+  cursor: pointer;
 }
 
-.navbar-links li a::after {
+.navbar-links li a::after, .navbar-links li button::after {
   content: '';
   position: absolute;
   width: 0%;
@@ -75,11 +78,11 @@
   box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
 }
 
-.navbar-links li a:hover {
+.navbar-links li a:hover, .navbar-links li button:hover {
   color: #38bdf8;
   text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
 }
 
-.navbar-links li a:hover::after {
+.navbar-links li a:hover::after, .navbar-links li button:hover::after {
   width: 100%;
 }

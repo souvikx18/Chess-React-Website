@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from 'react';
 import './Hero.css';
-import Navbar from './Navbar';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Tilt from 'react-parallax-tilt';
@@ -278,7 +277,6 @@ const Hero = () => {
   return (
     <>
       <div className="hero-container" ref={heroRef}>
-        <Navbar />
         <video className="hero-video" autoPlay muted loop playsInline>
           <source src="/videos/hero.mp4" type="video/mp4" />
         </video>

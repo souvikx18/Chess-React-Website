@@ -1,8 +1,10 @@
 // src/lenis.js
 import Lenis from 'lenis'
 
+export let lenis;
+
 export const initLenis = () => {
-  const lenis = new Lenis({
+  lenis = new Lenis({
     duration: 1.2,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smooth: true,
@@ -19,3 +21,10 @@ export const initLenis = () => {
 
   return lenis
 }
+
+export const scrollToTop = () => {
+  if (lenis) {
+    lenis.scrollTo(0, { immediate: true });
+  }
+  window.scrollTo(0, 0);
+};
