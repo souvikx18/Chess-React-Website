@@ -43,21 +43,29 @@
 
 .mission-image {
   flex: 1;
-  min-height: 400px; /* Space reserved */
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.mission-king {
-  width: 380px;
-  position: fixed;   /* Fixed to viewport - moves with scroll journey */
-  top: 50%;
-  right: 5%;         /* Anchor: starts on the RIGHT */
-  transform: translateY(-50%) rotate(-15deg);
-  filter: drop-shadow(0 0 45px rgba(56, 189, 248, 0.45));
-  z-index: 50;       /* Above all section content */
+.mission-king-img {
+  width: 340px;
+  max-width: 90%;
+  transform: rotate(-12deg);
+  filter: drop-shadow(0 0 40px rgba(56, 189, 248, 0.5))
+          drop-shadow(0 0 80px rgba(56, 189, 248, 0.2));
+  animation: kingFloat 4s ease-in-out infinite;
   pointer-events: none;
   mix-blend-mode: screen;
-  opacity: 0.95;
 }
+
+@keyframes kingFloat {
+  0%, 100% { transform: rotate(-12deg) translateY(0px); }
+  50%       { transform: rotate(-12deg) translateY(-18px); }
+}
+
+
 
 /* STORY SECTION */
 .story-section {
@@ -161,7 +169,6 @@
   margin: 0 auto;
   position: relative;
   z-index: 1;
-  padding-left: 400px; /* Reserve space for the King logo on the left */
 }
 
 .story-main {
@@ -632,11 +639,9 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(
-    400px circle at var(--mouse-x, 0) var(--mouse-y, 0),
-    rgba(56, 189, 248, 0.08),
-    transparent 40%
-  );
+  background: radial-gradient(400px circle at var(--mouse-x, 0) var(--mouse-y, 0),
+      rgba(56, 189, 248, 0.08),
+      transparent 40%);
   z-index: 1;
   opacity: 0;
   transition: opacity 0.5s ease;
@@ -655,12 +660,10 @@
   left: -100%;
   width: 200%;
   height: 200%;
-  background: linear-gradient(
-    45deg,
-    transparent 45%,
-    rgba(255, 255, 255, 0.03) 50%,
-    transparent 55%
-  );
+  background: linear-gradient(45deg,
+      transparent 45%,
+      rgba(255, 255, 255, 0.03) 50%,
+      transparent 55%);
   z-index: 3;
   transition: none;
   pointer-events: none;
@@ -761,11 +764,6 @@
   .vision-heading,
   .why-heading {
     font-size: 2rem;
-  }
-
-  .mission-king {
-    width: 200px;
-    height: 200px;
   }
 
   .team-grid {

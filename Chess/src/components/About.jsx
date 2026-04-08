@@ -2,247 +2,204 @@ import React, { useEffect } from 'react';
 import './About.css';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import Tilt from 'react-parallax-tilt';
+import { getLenis } from '../lenis';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 const About = () => {
   useEffect(() => {
-    window.scrollTo(0, 0);
-    // Mission Section Animation
+    // ─── 1. Sync Lenis with GSAP ScrollTrigger ───────────────────────────────
+    // getLenis() reads the live instance (initLenis runs in App.jsx's useEffect).
+    const lenis = getLenis();
+
+    if (lenis) {
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.lagSmoothing(0);
+    }
+
+    // Scroll to top on mount
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true });
+    } else {
+      window.scrollTo(0, 0);
+    }
+
+    // ─── 2. Helper: build a clean ScrollTrigger config ───────────────────────
+    const st = (trigger, start = 'top 85%', extra = {}) => ({
+      trigger,
+      start,
+      toggleActions: 'play none none reverse',
+      ...extra,
+    });
+
+    // ─── 3. Mission Section ───────────────────────────────────────────────────
     const missionHeading = document.querySelector('.mission-heading');
-    const missionPara = document.querySelector('.mission-para');
-    const missionKing = document.querySelector('.mission-king');
+    const missionPara    = document.querySelector('.mission-para');
+    const missionKing    = document.querySelector('.mission-king-img');
 
     if (missionHeading && missionPara) {
-      gsap.set([missionHeading, missionPara], { opacity: 0, y: 80 });
+      gsap.set([missionHeading, missionPara], { opacity: 0, y: 60 });
 
       gsap.to(missionHeading, {
-        scrollTrigger: {
-          trigger: missionHeading,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse',
-        },
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power3.out',
+        scrollTrigger: st(missionHeading),
+        opacity: 1, y: 0, duration: 1, ease: 'power3.out',
       });
 
       gsap.to(missionPara, {
-        scrollTrigger: {
-          trigger: missionPara,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse',
-        },
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        delay: 0.2,
+        scrollTrigger: st(missionPara),
+        opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: 0.15,
       });
     }
 
-    // King only visible on Slide 1 (Mission) — fades out when leaving
     if (missionKing) {
+      gsap.set(missionKing, { opacity: 0, x: 80, scale: 0.85 });
       gsap.to(missionKing, {
-        scrollTrigger: {
-          trigger: '.mission-section',
-          start: 'bottom 80%',  // start fading as Mission bottom leaves viewport
-          end: 'bottom 20%',    // fully gone before Story section arrives
-          scrub: 1,
-        },
-        opacity: 0,
-        scale: 0.85,
-        ease: 'power2.inOut',
+        scrollTrigger: st('.mission-section', 'top 80%'),
+        opacity: 1, x: 0, scale: 1, duration: 1.2, ease: 'power3.out', delay: 0.3,
       });
     }
 
-    // Story Section Animation
+    // ─── 4. Story Section ─────────────────────────────────────────────────────
     const storyHeading = document.querySelector('.story-heading');
-    const storyParas = document.querySelectorAll('.story-para');
-    const storyCards = document.querySelectorAll('.story-card');
+    const storyTagline = document.querySelector('.story-tagline');
+    const storyParas   = document.querySelectorAll('.story-para');
+    const storyCards   = document.querySelectorAll('.story-card');
 
-    if (storyHeading && storyParas.length > 0) {
-      gsap.set(storyHeading, { opacity: 0, y: -50 });
-
+    if (storyHeading) {
+      gsap.set(storyHeading, { opacity: 0, y: -40 });
       gsap.to(storyHeading, {
-        scrollTrigger: {
-          trigger: storyHeading,
-          start: 'top 90%',
-          scrub: 1,
-        },
-        opacity: 1,
-        y: 0,
-        ease: 'power3.out',
+        scrollTrigger: st(storyHeading, 'top 88%'),
+        opacity: 1, y: 0, duration: 1, ease: 'power3.out',
       });
+    }
 
+    if (storyTagline) {
+      gsap.set(storyTagline, { opacity: 0, scale: 0.9 });
+      gsap.to(storyTagline, {
+        scrollTrigger: st(storyTagline, 'top 88%'),
+        opacity: 1, scale: 1, duration: 0.9, ease: 'back.out(1.4)', delay: 0.1,
+      });
+    }
+
+    if (storyParas.length > 0) {
       gsap.set(storyParas, { opacity: 0, x: -50 });
-
       gsap.to(storyParas, {
         scrollTrigger: {
           trigger: storyParas[0],
-          start: 'top 80%',
-          end: 'bottom 60%',
-          scrub: 1.5,
+          start: 'top 82%',
+          end: 'bottom 55%',
+          scrub: 1.2,
         },
-        opacity: 1,
-        x: 0,
-        stagger: 0.3,
-        ease: 'power3.out',
+        opacity: 1, x: 0, stagger: 0.3, ease: 'power3.out',
       });
     }
 
     if (storyCards.length > 0) {
-      gsap.set(storyCards, { opacity: 0, y: 80 });
+      gsap.set(storyCards, { opacity: 0, y: 70, scale: 0.95 });
       gsap.to(storyCards, {
-        scrollTrigger: {
-          trigger: '.story-mission-vision',
-          start: 'top 85%',
-          toggleActions: 'play none none reverse',
-        },
-        opacity: 1,
-        y: 0,
-        stagger: 0.2,
-        duration: 0.8,
-        ease: 'power3.out',
+        scrollTrigger: st('.story-mission-vision', 'top 85%'),
+        opacity: 1, y: 0, scale: 1, stagger: 0.2, duration: 0.9, ease: 'power3.out',
       });
     }
 
-    // Team Section Animation
+    // ─── 5. Team Section ──────────────────────────────────────────────────────
     const teamHeading = document.querySelector('.team-heading');
-    const teamCards = document.querySelectorAll('.team-card');
+    const teamCards   = document.querySelectorAll('.team-card');
 
-    if (teamHeading && teamCards.length > 0) {
-      gsap.set([teamHeading, ...teamCards], { opacity: 0, scale: 0.9, y: 100 });
-
+    if (teamHeading) {
+      gsap.set(teamHeading, { opacity: 0, y: -50 });
       gsap.to(teamHeading, {
-        scrollTrigger: {
-          trigger: '.team-section',
-          start: 'top 90%',
-          scrub: 2,
-        },
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        ease: 'power2.out',
+        scrollTrigger: st('.team-section', 'top 88%'),
+        opacity: 1, y: 0, duration: 1, ease: 'power3.out',
       });
+    }
 
+    if (teamCards.length > 0) {
+      gsap.set(teamCards, { opacity: 0, y: 80, scale: 0.92 });
       gsap.to(teamCards, {
         scrollTrigger: {
           trigger: '.team-section',
-          start: 'top 75%',
-          end: 'center 50%',
-          scrub: 2,
+          start: 'top 78%',
+          end: 'center 45%',
+          scrub: 1.5,
         },
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        stagger: 0.2,
-        ease: 'power2.out',
+        opacity: 1, y: 0, scale: 1, stagger: 0.18, ease: 'power2.out',
       });
     }
 
-    // Vision Section Animation
+    // ─── 6. Vision Section ────────────────────────────────────────────────────
     const visionHeading = document.querySelector('.vision-heading');
-    const visionPara = document.querySelector('.vision-para');
-    const visionStats = document.querySelectorAll('.vision-stat');
+    const visionPara    = document.querySelector('.vision-para');
+    const visionStats   = document.querySelectorAll('.vision-stat');
 
-    if (visionHeading && visionPara && visionStats.length > 0) {
-      gsap.set(visionHeading, { opacity: 0, scale: 0.8 });
-
+    if (visionHeading) {
+      gsap.set(visionHeading, { opacity: 0, scale: 0.85 });
       gsap.to(visionHeading, {
-        scrollTrigger: {
-          trigger: visionHeading,
-          start: 'top 85%',
-          scrub: 1,
-        },
-        opacity: 1,
-        scale: 1,
-        ease: 'power3.out',
+        scrollTrigger: st(visionHeading, 'top 87%'),
+        opacity: 1, scale: 1, duration: 1, ease: 'power3.out',
       });
+    }
 
+    if (visionPara) {
       gsap.set(visionPara, { opacity: 0, y: 40 });
-
       gsap.to(visionPara, {
-        scrollTrigger: {
-          trigger: visionPara,
-          start: 'top 85%',
-          scrub: 1,
-        },
-        opacity: 1,
-        y: 0,
-        ease: 'power3.out',
+        scrollTrigger: st(visionPara, 'top 87%'),
+        opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: 0.1,
       });
+    }
 
-      gsap.set(visionStats, { opacity: 0, scale: 0.9, y: 60 });
-
+    if (visionStats.length > 0) {
+      gsap.set(visionStats, { opacity: 0, y: 50, scale: 0.92 });
       gsap.to(visionStats, {
         scrollTrigger: {
           trigger: visionStats[0],
-          start: 'top 90%',
+          start: 'top 88%',
           end: 'bottom 70%',
-          scrub: 2,
+          scrub: 1.5,
         },
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        stagger: 0.3,
-        ease: 'power2.out',
+        opacity: 1, y: 0, scale: 1, stagger: 0.25, ease: 'power2.out',
       });
     }
 
-    // Why Section Animation and Mouse Follow
+    // ─── 7. Why Section ───────────────────────────────────────────────────────
     const whyHeading = document.querySelector('.why-heading');
-    const whyCards = document.querySelectorAll('.why-card');
-    const whyGrid = document.querySelector('.why-grid');
+    const whyCards   = document.querySelectorAll('.why-card');
+    const whyGrid    = document.querySelector('.why-grid');
 
-    if (whyHeading && whyCards.length > 0) {
-      gsap.set(whyHeading, { opacity: 0, scale: 0.8 });
+    if (whyHeading) {
+      gsap.set(whyHeading, { opacity: 0, scale: 0.85 });
       gsap.to(whyHeading, {
-        scrollTrigger: {
-          trigger: whyHeading,
-          start: 'top 85%',
-          scrub: 1,
-        },
-        opacity: 1,
-        scale: 1,
-        ease: 'power3.out',
-      });
-
-      gsap.set(whyCards, { opacity: 0, y: 80 });
-      gsap.to(whyCards, {
-        scrollTrigger: {
-          trigger: '.why-grid',
-          start: 'top 85%',
-          toggleActions: 'play none none reverse',
-        },
-        opacity: 1,
-        y: 0,
-        stagger: 0.15,
-        duration: 0.8,
-        ease: 'power3.out',
+        scrollTrigger: st(whyHeading, 'top 87%'),
+        opacity: 1, scale: 1, duration: 1, ease: 'power3.out',
       });
     }
 
+    if (whyCards.length > 0) {
+      gsap.set(whyCards, { opacity: 0, y: 70 });
+      gsap.to(whyCards, {
+        scrollTrigger: st('.why-grid', 'top 85%'),
+        opacity: 1, y: 0, stagger: 0.12, duration: 0.85, ease: 'power3.out',
+      });
+    }
+
+    // ─── 8. Mouse follow on Why cards ────────────────────────────────────────
     const handleMouseMove = (e) => {
       whyCards.forEach(card => {
         const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        card.style.setProperty('--mouse-x', `${x}px`);
-        card.style.setProperty('--mouse-y', `${y}px`);
+        card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+        card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
       });
     };
 
-    if (whyGrid) {
-      whyGrid.addEventListener('mousemove', handleMouseMove);
-    }
+    if (whyGrid) whyGrid.addEventListener('mousemove', handleMouseMove);
 
+    // ─── Cleanup ──────────────────────────────────────────────────────────────
     return () => {
-      if (whyGrid) {
-        whyGrid.removeEventListener('mousemove', handleMouseMove);
-      }
+      if (whyGrid) whyGrid.removeEventListener('mousemove', handleMouseMove);
+      ScrollTrigger.getAll().forEach(t => t.kill());
+      if (lenis) lenis.off('scroll', ScrollTrigger.update);
     };
   }, []);
 
@@ -277,9 +234,6 @@ const About = () => {
 
   return (
     <div id="about" className="about-section">
-      {/* Global King Piece Journey */}
-      <img src="/images/king.png" alt="Chess King" className="mission-king" />
-
       {/* Mission Section */}
       <div className="mission-section">
         <div className="mission-content">
@@ -288,7 +242,9 @@ const About = () => {
             At MateX, our mission is to democratize chess mastery for players of all levels. We believe that strategic thinking, creativity, and competitive spirit should be accessible to everyone, regardless of experience or background. Through innovative technology, comprehensive training tools, and a vibrant community, we empower players to reach their full potential and experience the profound joy of checkmate.
           </p>
         </div>
-        <div className="mission-image"></div>
+        <div className="mission-image">
+          <img src="/images/king.png" alt="Chess King" className="mission-king-img" />
+        </div>
       </div>
 
       {/* Story Section */}
